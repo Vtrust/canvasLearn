@@ -17,8 +17,8 @@ window.onload = function () {
     canvas.width = WINDOW_WIDTH;
     canvas.height = WINDOW_HEIGHT;
 
-	mX=WINDOW_WIDTH/2;
-	mY=WINDOW_HEIGHT/2;
+	//mX=WINDOW_WIDTH/2;
+	//mY=WINDOW_HEIGHT/2;
 
     addBall(50,8);
     setInterval(
