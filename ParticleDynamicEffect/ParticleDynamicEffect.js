@@ -17,15 +17,16 @@ window.onload = function () {
     canvas.width = WINDOW_WIDTH;
     canvas.height = WINDOW_HEIGHT;
 
+	mX=WINDOW_WIDTH/2;
+	mY=WINDOW_HEIGHT/2;
 
-
-    addBall(500,2);
+    addBall(50,8);
     setInterval(
         function(){
             render(context);
             update();
         },
-        20
+        30
     );
 }
 
@@ -41,9 +42,20 @@ function render(cxt) {
 
     drawBalls(cxt);
 
-    canvas.addEventListener("mousemove",detect);
 
-    drawLine(200,0.01);
+    canvas.addEventListener("mousemove",detect);
+	canvas.addEventListener("touchmove",detect);
+
+    centerBalls(20);
+    drawLine(200,0.3,mX,mY);
+}
+
+function centerBalls(n){
+    for(var i=0;i<balls.length;i=i+Math.floor(balls.length/n)){
+        var x=balls[i].x;
+        var y=balls[i].y;
+        drawLine(200,0.01,x,y);
+    }
 }
 
 function detect(event){
@@ -56,11 +68,11 @@ function detect(event){
 
 
 
-function drawLine(distant,n){
+function drawLine(distant,n,x,y){
     for(var i=0;i<balls.length;i++){
-        if(getDistant(mX,mY,balls[i].x,balls[i].y)<distant){
+        if(getDistant(x,y,balls[i].x,balls[i].y)<distant){
             context.moveTo(balls[i].x,balls[i].y);
-            context.lineTo(mX,mY);
+            context.lineTo(x,y);
             context.lineWidth=n;
             context.strokeStyle="#fff";
             context.stroke();
