@@ -3,7 +3,7 @@
  */
 var Pipe = function (upImg, downImg, x, drawHeight, proportion, speed, ctx) {
     this.x = x * proportion;
-    this.whight=150;
+    this.whight=100;
     this.upImg = upImg;
     this.downImg = downImg;
     this.width = upImg.width * proportion;

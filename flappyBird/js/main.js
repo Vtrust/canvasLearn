@@ -12,7 +12,7 @@ var imglist = [
 
 // 小鸟设置
 var birdSpeed = 0;
-var birdA = 0.0005;
+var birdA = 0.0008;
 
 // 天空、地面、管道设置
 var skySpeed = -0.01;
@@ -28,6 +28,19 @@ var PROPORTION;
 
 var cvs = document.getElementById("cvs");
 var ctx = cvs.getContext("2d");
+// polyfill 提供了这个方法用来获取设备的 pixel ratio
+var getPixelRatio = function(context) {
+    var backingStore = context.backingStorePixelRatio ||
+        context.webkitBackingStorePixelRatio ||
+        context.mozBackingStorePixelRatio ||
+        context.msBackingStorePixelRatio ||
+        context.oBackingStorePixelRatio ||
+        context.backingStorePixelRatio || 1;
+
+    return (window.devicePixelRatio || 1) / backingStore;
+};
+
+var ratio = getPixelRatio(ctx);
 
 var click = true;
 
@@ -36,8 +49,13 @@ window.onload = function () {
     WINDOW_WIDTH = document.body.clientWidth;
     WINDOW_HEIGHT = document.body.clientHeight;
     //设置全屏显示
-    cvs.width = WINDOW_WIDTH;
-    cvs.height = WINDOW_HEIGHT;
+    cvs.width=WINDOW_WIDTH*ratio;
+    cvs.height=WINDOW_HEIGHT*ratio;
+    cvs.style.width=WINDOW_WIDTH+"px";
+    cvs.style.height=WINDOW_HEIGHT+"px";
+
+    WINDOW_WIDTH=WINDOW_WIDTH*ratio;
+    WINDOW_HEIGHT=WINDOW_HEIGHT*ratio;
 
     // 一些数据初始化
     var skyX = 0;
@@ -147,7 +165,7 @@ window.onload = function () {
                 }
                 else if (click) {
                     for (var m = 0; m < pipes.length; m++) {
-                        if (pipes[m].hitTest(birdX, birdY, 25)) {
+                        if (pipes[m].hitTest(birdX, birdY, 28)) {
                             clickOver = true;
                             click = false;
                             break;
@@ -176,7 +194,7 @@ window.onload = function () {
         //设置点击事件。给小鸟一个瞬时的向上速度
         cvs.addEventListener("click", function (event) {
             if (click) {
-                bird.speed = -0.25 * PROPORTION;
+                bird.speed = -0.3 * PROPORTION;
             }
             if(firstLoad){
                 preTime = Date.now();
@@ -210,7 +228,7 @@ window.onload = function () {
         ctx.fontWeight = "bold";
         ctx.textAlign = "center";
         ctx.fillStyle = "#fff";
-        ctx.font = "40px microsoft yahei";
+        ctx.font = 40*ratio+"px microsoft yahei";
         ctx.fillText("点击开始游戏", WINDOW_WIDTH / 2, WINDOW_HEIGHT /3);
     }
 
@@ -220,9 +238,9 @@ window.onload = function () {
         ctx.fontWeight = "bold";
         ctx.textAlign = "center";
         ctx.fillStyle = "#fff";
-        ctx.font = "40px microsoft yahei";
+        ctx.font = 40*ratio+"px microsoft yahei";
         ctx.fillText("游戏结束", WINDOW_WIDTH / 2, WINDOW_HEIGHT /3);
-        ctx.font = "30px microsoft yahei";
+        ctx.font = 30*ratio+"px microsoft yahei";
         ctx.fillText("得分: "+pipes[0].getScore(), WINDOW_WIDTH / 2, WINDOW_HEIGHT *3/7);
         ctx.fillText("点击重新开始", WINDOW_WIDTH / 2, WINDOW_HEIGHT *4/7);
     }
