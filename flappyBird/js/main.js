@@ -12,7 +12,7 @@ var imglist = [
 
 // 小鸟设置
 var birdSpeed = 0;
-var birdA = 0.0008;
+var birdA = 0.0005;
 
 // 天空、地面、管道设置
 var skySpeed = -0.01;
@@ -147,7 +147,7 @@ window.onload = function () {
                 }
                 else if (click) {
                     for (var m = 0; m < pipes.length; m++) {
-                        if (pipes[m].hitTest(birdX, birdY, 28)) {
+                        if (pipes[m].hitTest(birdX, birdY, 25)) {
                             clickOver = true;
                             click = false;
                             break;
@@ -176,7 +176,7 @@ window.onload = function () {
         //设置点击事件。给小鸟一个瞬时的向上速度
         cvs.addEventListener("click", function (event) {
             if (click) {
-                bird.speed = -0.3 * PROPORTION;
+                bird.speed = -0.25 * PROPORTION;
             }
             if(firstLoad){
                 preTime = Date.now();
