@@ -12,7 +12,7 @@ var imglist = [
 
 // 小鸟设置
 const birdSpeed = 0.0003;
-const birdA = 0.0005;
+const birdA = 0.0008;
 
 // 天空、地面、管道设置
 var skySpeed = -0.01;
@@ -189,7 +189,7 @@ window.onload = function () {
         cvs.addEventListener("click", function (event) {
             console.log(event);
             if (click) {
-                bird.speed = -0.25 * PROPORTION;
+                bird.speed = -0.3 * PROPORTION;
             }
             if(gameOver){
                 start(imgEls);
