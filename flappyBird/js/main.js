@@ -193,7 +193,22 @@ window.onload = function () {
 
         //设置点击事件。给小鸟一个瞬时的向上速度
         cvs.addEventListener("click", function (event) {
+			haveClick();
+        });
+		 cvs.addEventListener("onclick", function (event) {
+			haveClick();
+        });
+        document.onkeydown = function (event) {
             if (click) {
+                var e = event || window.event || arguments.callee.caller.arguments[0];
+                if (e && e.keyCode === 32) { // 按 Esc
+                   haveClick();
+                }
+            }
+        };
+		
+		function haveClick(){
+			            if (click) {
                 bird.speed = -0.25 * PROPORTION;
             }
             if(firstLoad){
@@ -210,16 +225,7 @@ window.onload = function () {
                 preTime = Date.now();
                 start(imgEls);
             }
-
-        });
-        document.onkeydown = function (event) {
-            if (click) {
-                var e = event || window.event || arguments.callee.caller.arguments[0];
-                if (e && e.keyCode === 32) { // 按 Esc
-                    bird.speed = -0.3 * PROPORTION;
-                }
-            }
-        };
+		}
     }
 
     //第一次开始游戏
