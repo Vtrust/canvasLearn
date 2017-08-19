@@ -195,7 +195,7 @@ window.onload = function () {
         cvs.addEventListener("click", function (event) {
 			haveClick();
         });
-		 cvs.addEventListener("onclick", function (event) {
+		 cvs.addEventListener("touchstart", function (event) {
 			haveClick();
         });
         document.onkeydown = function (event) {
