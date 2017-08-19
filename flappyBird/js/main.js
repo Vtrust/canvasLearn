@@ -11,8 +11,8 @@ var imglist = [
 ];
 
 // 小鸟设置
-const birdSpeed = 0.0003;
-const birdA = 0.0008;
+var birdSpeed = 0;
+var birdA = 0.0008;
 
 // 天空、地面、管道设置
 var skySpeed = -0.01;
@@ -26,17 +26,12 @@ var WINDOW_HEIGHT;
 // 缩放比例
 var PROPORTION;
 
-// 分数
-var SCORE = 0;
-
-
 var cvs = document.getElementById("cvs");
 var ctx = cvs.getContext("2d");
 
 var click = true;
 
 window.onload = function () {
-
     //获得屏宽高
     WINDOW_WIDTH = document.body.clientWidth;
     WINDOW_HEIGHT = document.body.clientHeight;
@@ -44,7 +39,7 @@ window.onload = function () {
     cvs.width = WINDOW_WIDTH;
     cvs.height = WINDOW_HEIGHT;
 
-    // 对天空的处理
+    // 一些数据初始化
     var skyX = 0;
     var skyY = 0;
     var landY = 0;
@@ -52,6 +47,14 @@ window.onload = function () {
     var landNum = 0;
     var pipelNum = 0;
     var birdY = 0;
+
+    // 游戏状态
+    var firstLoad=true;
+    var gameOver = true;
+    var clickOver = false;
+
+    //时间初始化
+    var preTime = Date.now();
 
     //屏幕长宽对比判断
     if (WINDOW_WIDTH > WINDOW_HEIGHT) {
@@ -62,23 +65,29 @@ window.onload = function () {
         } else {
             landY = WINDOW_HEIGHT - 112 * PROPORTION;
         }
-        birdY = landY / 3;
+        birdY = landY / 2;
     } else {
         PROPORTION = WINDOW_HEIGHT / 600;
         landY = WINDOW_HEIGHT - 112 * PROPORTION;
-        birdY = WINDOW_HEIGHT / 3;
+        birdY = WINDOW_HEIGHT / 2;
     }
-    landNum = Math.ceil(WINDOW_WIDTH / (336 * PROPORTION) + 1);
-    pipelNum = Math.ceil(WINDOW_WIDTH / (200 * PROPORTION) + 1);
-    drawHeight = landY;
 
+    landNum = Math.ceil(WINDOW_WIDTH / (336 * PROPORTION) + 2);//地面块数
+    pipelNum = Math.ceil(WINDOW_WIDTH / (200 * PROPORTION) + 2);//管道数量
+    drawHeight = landY;// 小鸟飞行高度
+
+    //加载图片
     load(imglist, function (imgEls) {
         start(imgEls);
     });
 
 
-
+    //游戏开始函数
     function start(imgEls){
+        if(!firstLoad){
+            birdSpeed=-0.3;
+        }
+
         //天空背景图
         var sky1 = new Sky(imgEls["sky"], skyX, skyY, PROPORTION, skySpeed, ctx);
         //地面初始化
@@ -95,12 +104,9 @@ window.onload = function () {
         pipes[0].setScore(0);
         //小鸟初始化
         var bird = new Bird(imgEls["birds"], WINDOW_WIDTH / 4, birdY, PROPORTION, birdSpeed, birdA, ctx);
-        //时间初始化
-        var preTime = Date.now();
-        var gameOver = false;
-        var clickOver = false;
 
-        //主体循环
+
+        //动画循环循环
         function run() {
             var now = Date.now();
             var dt = now - preTime; // 毫秒差
@@ -124,45 +130,24 @@ window.onload = function () {
                 land.draw();
             });
             lands[0].setCount(landNum);
-
-            bird.update(dt);
+            if(!firstLoad){
+                bird.update(dt);
+            }
             bird.draw();
 
-
-            // 分数显示
-
-            //设置字体填充颜色
-            ctx.font = "30px microsoft yahei";
-            ctx.fontWeight = "bold";
-            ctx.textAlign = "center";
-            ctx.fillStyle = "#fff";
-            if(gameOver){
-                //从坐标点(50,50)开始绘制文字
-                ctx.font = "40px microsoft yahei";
-                ctx.fillText("游戏结束", WINDOW_WIDTH / 2, WINDOW_HEIGHT /3);
-                ctx.font = "30px microsoft yahei";
-                ctx.fillText("得分: "+pipes[0].getScore(), WINDOW_WIDTH / 2, WINDOW_HEIGHT *3/7);
-                ctx.fillText("点击重新开始", WINDOW_WIDTH / 2, WINDOW_HEIGHT *4/7);
-            }else {
-                ctx.fillText(pipes[0].getScore(), WINDOW_WIDTH / 2, WINDOW_HEIGHT / 6);
-            }
-
-            //-------------------------
-            // 任何违规都会触发 gameOver=true；
             var birdX = bird.x;
             var birdY = bird.y;
 
-
             if (!gameOver) {
-
-
-                //碰到天和地
+                // 分数显示
+                ctx.fillText(pipes[0].getScore(), WINDOW_WIDTH / 2, WINDOW_HEIGHT / 6);
+                // 碰到天和地
                 if (bird.y <= 20) {
                     click = false;
                 }
                 else if (click) {
                     for (var m = 0; m < pipes.length; m++) {
-                        if (pipes[m].hitTest(birdX, birdY, 25)) {
+                        if (pipes[m].hitTest(birdX, birdY, 28)) {
                             clickOver = true;
                             click = false;
                             break;
@@ -172,7 +157,6 @@ window.onload = function () {
                 else if (!click && !clickOver) {
                     click = true;
                 }
-                console.log(click);
                 if (bird.y >= landY - 35 * PROPORTION / 2) {
                     bird.y = landY - 35 * PROPORTION / 2;
                     requestAnimationFrame(run);
@@ -180,25 +164,36 @@ window.onload = function () {
                 }
                 requestAnimationFrame(run);
             }
+            else if(!firstLoad){
+                end(ctx,pipes);
+            }else {
+                firstStart(ctx);
+            }
         }
 
         requestAnimationFrame(run);
 
         //设置点击事件。给小鸟一个瞬时的向上速度
-
         cvs.addEventListener("click", function (event) {
-            console.log(event);
             if (click) {
                 bird.speed = -0.3 * PROPORTION;
             }
+            if(firstLoad){
+                preTime = Date.now();
+                bird.speed = -0.3 * PROPORTION;
+                gameOver=false;
+                firstLoad=false;
+                requestAnimationFrame(run);
+            }
             if(gameOver){
-                start(imgEls);
                 click=true;
+                clickOver=false;
                 gameOver=!gameOver;
+                preTime = Date.now();
+                start(imgEls);
             }
 
         });
-
         document.onkeydown = function (event) {
             if (click) {
                 var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -207,6 +202,29 @@ window.onload = function () {
                 }
             }
         };
+    }
+
+    //第一次开始游戏
+    function firstStart(ctx){
+        //设置字体填充颜色
+        ctx.fontWeight = "bold";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#fff";
+        ctx.font = "40px microsoft yahei";
+        ctx.fillText("点击开始游戏", WINDOW_WIDTH / 2, WINDOW_HEIGHT /3);
+    }
+
+    //游戏结束函数
+    function end(ctx,pipes){
+        //设置字体填充颜色
+        ctx.fontWeight = "bold";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#fff";
+        ctx.font = "40px microsoft yahei";
+        ctx.fillText("游戏结束", WINDOW_WIDTH / 2, WINDOW_HEIGHT /3);
+        ctx.font = "30px microsoft yahei";
+        ctx.fillText("得分: "+pipes[0].getScore(), WINDOW_WIDTH / 2, WINDOW_HEIGHT *3/7);
+        ctx.fillText("点击重新开始", WINDOW_WIDTH / 2, WINDOW_HEIGHT *4/7);
     }
 };
 

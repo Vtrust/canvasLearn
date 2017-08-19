@@ -16,7 +16,10 @@ Bird.prototype.draw = function (){
     this.ctx.save();
     this.ctx.translate(this.x ,this.y);  //坐标移动到小鸟的中心点上
     //小鸟最大旋转30度，并随着速度实时改变角度
-    if(this.speed<0.7*this.proportion){
+    if(this.speed===0){
+
+    }
+    else if(this.speed<0.7*this.proportion){
         this.ctx.rotate((Math.PI /2) * this.speed*0.7 / (0.5*this.proportion));
     }else {
         this.ctx.rotate((Math.PI /2));
