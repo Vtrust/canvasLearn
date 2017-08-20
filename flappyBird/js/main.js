@@ -36,12 +36,13 @@ load(imglist, function (imgEls) {
     var birdSpeed = 0;
     var birdA = 0.0005;
     var birdR = 26;
-    var clickSpeed = -0.25;
+    var clickSpeed = -0.2;
 
     // 天空、地面、管道设置
     var landSpeed = -0.1;
     var pipe1Speed = -0.1;
     var pipelWidth = 200;
+    var wheight=100;
 
     // 天空绘制坐标
     var skyX = 0;
@@ -126,7 +127,7 @@ load(imglist, function (imgEls) {
             //新建管道
             var pipes = [];
             for (var j = 0; j < pipeNum; j++) {
-                pipes[j] = new Pipe(imgEls["pipe2"], imgEls["pipe1"], (3 + j) * pipelWidth, drawHeight, 100, PROPORTION, pipe1Speed, ctx);
+                pipes[j] = new Pipe(imgEls["pipe2"], imgEls["pipe1"], (3 + j) * pipelWidth, drawHeight, wheight, PROPORTION, pipe1Speed, ctx);
             }
             // 管道设置
             pipes[0].setCount(pipeNum, pipelWidth);
@@ -193,8 +194,8 @@ load(imglist, function (imgEls) {
                 } else {
                     firstStart(ctx);
                 }
-
-                /*var _x = 0;
+/*
+                var _x = 0;
                 var _y = 0;
                 var _t = 40;
                 var _i = 0;
@@ -202,22 +203,22 @@ load(imglist, function (imgEls) {
                     draw_Y(ctx, Math.ceil(_x) + 0.5, WINDOW_HEIGHT);
                     _i++;
                     _x = _x + _t;
-                     ctx.fontWeight = "bold";
+                    /!*ctx.fontWeight = "bold";
                      ctx.textAlign = "left";
                      ctx.fillStyle = "#000";
                      ctx.font = 10 + "px microsoft yahei";
-                     ctx.fillText(String(_i), _x+2, 10 );
+                     ctx.fillText(String(_i), _x+2, 10 );*!/
                 } while (_x < WINDOW_WIDTH);
                 _i = 0;
                 do {
                     draw_X(ctx, Math.ceil(_y) + 0.5, WINDOW_WIDTH);
                     _i++;
                     _y = _y + _t;
-                    ctx.fontWeight = "bold";
+                    /!* ctx.fontWeight = "bold";
                      ctx.textAlign = "left";
                      ctx.fillStyle = "#000";
                      ctx.font = 10 + "px microsoft yahei";
-                     ctx.fillText(String(_i),2, _y-2 );
+                     ctx.fillText(String(_i),2, _y-2 );*!/
                 } while (_y < WINDOW_HEIGHT);*/
             }
 
@@ -226,9 +227,6 @@ load(imglist, function (imgEls) {
 
             //设置点击事件。给小鸟一个瞬时的向上速度
             cvs.addEventListener("click", function () {
-                haveClick();
-            });
-            cvs.addEventListener("onclick", function () {
                 haveClick();
             });
             document.onkeydown = function (event) {
