@@ -15,7 +15,7 @@ var Bird = function (img,x,y,proportion,speed,a,ctx){
 Bird.prototype.draw = function (){
     this.ctx.save();
     this.ctx.translate(this.x ,this.y);  //坐标移动到小鸟的中心点上
-    //小鸟最大旋转30度，并随着速度实时改变角度
+    //小鸟随着速度实时改变角度
     if(this.speed===0){
 
     }
