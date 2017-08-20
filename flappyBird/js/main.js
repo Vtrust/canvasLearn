@@ -194,7 +194,7 @@ load(imglist, function (imgEls) {
                     firstStart(ctx);
                 }
 
-                var _x = 0;
+                /*var _x = 0;
                 var _y = 0;
                 var _t = 40;
                 var _i = 0;
@@ -202,23 +202,23 @@ load(imglist, function (imgEls) {
                     draw_Y(ctx, Math.ceil(_x) + 0.5, WINDOW_HEIGHT);
                     _i++;
                     _x = _x + _t;
-                    /*ctx.fontWeight = "bold";
+                     ctx.fontWeight = "bold";
                      ctx.textAlign = "left";
                      ctx.fillStyle = "#000";
                      ctx.font = 10 + "px microsoft yahei";
-                     ctx.fillText(String(_i), _x+2, 10 );*/
+                     ctx.fillText(String(_i), _x+2, 10 );
                 } while (_x < WINDOW_WIDTH);
                 _i = 0;
                 do {
                     draw_X(ctx, Math.ceil(_y) + 0.5, WINDOW_WIDTH);
                     _i++;
                     _y = _y + _t;
-                    /* ctx.fontWeight = "bold";
+                    ctx.fontWeight = "bold";
                      ctx.textAlign = "left";
                      ctx.fillStyle = "#000";
                      ctx.font = 10 + "px microsoft yahei";
-                     ctx.fillText(String(_i),2, _y-2 );*/
-                } while (_y < WINDOW_HEIGHT);
+                     ctx.fillText(String(_i),2, _y-2 );
+                } while (_y < WINDOW_HEIGHT);*/
             }
 
             requestAnimationFrame(run);
