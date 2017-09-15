@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 2016/8/23 0023.
  */
-var Pipe = function (upImg, downImg, x, drawHeight,whight, proportion, speed, ctx) {
+var Pipe = function (upImg, downImg, x, drawHeight,whight, proportion, speed, ctx,sfx_point,audioT) {
     this.x = x * proportion;
     this.whight=whight* proportion;
     this.upImg = upImg;
@@ -14,6 +14,8 @@ var Pipe = function (upImg, downImg, x, drawHeight,whight, proportion, speed, ct
     this.ctx = ctx;
     this.r = (Math.random() * drawHeight * 0.5) + drawHeight * 0.1;
     this.ok=false;
+    this.sfx_point=sfx_point;
+    this.audioT=audioT;
 };
 Pipe.prototype.draw = function () {
     this.ctx.drawImage(
@@ -39,6 +41,9 @@ Pipe.prototype.hitTest = function (x, y, diameter) {
     if( !this.ok&&x>this.x+this.width){
         this.ok=true;
         Pipe.score=Pipe.score+1;
+        if(this.audioT){
+            this.sfx_point.play();
+        }
     }
 
     var rx=x-(this.x+this.width/2);

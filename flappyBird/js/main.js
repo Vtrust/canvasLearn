@@ -3,13 +3,12 @@
  */
 // 文件列表
 var imglist = [
-    {"name": "birds", "src": "res/birds.png"},
-    {"name": "land", "src": "res/land.png"},
-    {"name": "pipe1", "src": "res/pipe1.png"},
-    {"name": "pipe2", "src": "res/pipe2.png"},
-    {"name": "sky", "src": "res/sky.png"}
+    {"name": "birds", "src": "res/img/birds.png"},
+    {"name": "land", "src": "res/img/land.png"},
+    {"name": "pipe1", "src": "res/img/pipe1.png"},
+    {"name": "pipe2", "src": "res/img/pipe2.png"},
+    {"name": "sky", "src": "res/img/sky.png"}
 ];
-
 //开始加载图片
 load(imglist, function (imgEls) {
     /*
@@ -18,6 +17,16 @@ load(imglist, function (imgEls) {
     //获得绘图环境
     var cvs = document.getElementById("cvs");
     var ctx = cvs.getContext("2d");
+
+    var audioT=true;
+    var flag = IsPC(); //true为PC端，false为手机端
+
+
+    var sfx_wing = document.getElementById("sfx_wing");
+    var sfx_die = document.getElementById("sfx_die");
+    var sfx_hit = document.getElementById("sfx_hit");
+    var sfx_point = document.getElementById("sfx_point");
+    var sfx_swooshing = document.getElementById("sfx_swooshing");
 
     // 提高显示清晰度 polyfill 提供了这个方法用来获取设备的 pixel ratio
     var getPixelRatio = function (context) {
@@ -34,7 +43,7 @@ load(imglist, function (imgEls) {
     // 一些数据初始化
     // 小鸟的初始速度、重力加速度
     var birdSpeed = 0;
-    var birdA = 0.0005;
+    var birdA = 0.0004;
     var birdR = 26;
     var clickSpeed = -0.2;
 
@@ -42,7 +51,7 @@ load(imglist, function (imgEls) {
     var landSpeed = -0.1;
     var pipe1Speed = -0.1;
     var pipelWidth = 200;
-    var wheight=100;
+    var wheight = 120;
 
     // 天空绘制坐标
     var skyX = 0;
@@ -69,6 +78,15 @@ load(imglist, function (imgEls) {
 
     // 前一次时间
     var preTime = 0;
+
+
+    if(!flag){
+        audioT=false;
+        birdA = 0.0004;
+        clickSpeed = -0.2;
+        wheight = 150;
+    }
+
 
     // 首次屏幕加载
     window.onload = function () {
@@ -127,7 +145,7 @@ load(imglist, function (imgEls) {
             //新建管道
             var pipes = [];
             for (var j = 0; j < pipeNum; j++) {
-                pipes[j] = new Pipe(imgEls["pipe2"], imgEls["pipe1"], (3 + j) * pipelWidth, drawHeight, wheight, PROPORTION, pipe1Speed, ctx);
+                pipes[j] = new Pipe(imgEls["pipe2"], imgEls["pipe1"], (3 + j) * pipelWidth, drawHeight, wheight, PROPORTION, pipe1Speed, ctx,sfx_point,audioT);
             }
             // 管道设置
             pipes[0].setCount(pipeNum, pipelWidth);
@@ -164,6 +182,7 @@ load(imglist, function (imgEls) {
                 }
                 bird.draw();
 
+
                 if (!gameOver) {
                     // 分数显示
                     ctx.fillText(pipes[0].getScore(), WINDOW_WIDTH / 2, WINDOW_HEIGHT / 6);
@@ -176,17 +195,27 @@ load(imglist, function (imgEls) {
                     }
                     if (bird.y >= landY - 35 * PROPORTION / 2) {
                         bird.y = landY - 35 * PROPORTION / 2;
+                        if(!clickOver&&audioT){
+                            sfx_hit.play();
+                        }
                         gameOver = true;
                         requestAnimationFrame(run);
                     }
                     // 管道碰撞检测
-                    for (var m = 0; m < pipes.length; m++) {
-                        if (pipes[m].hitTest(bird.x, bird.y, birdR)) {
-                            clickOver = true;
-                            click = false;
-                            break;
+                    if(!clickOver){
+                        for (var m = 0; m < pipes.length; m++) {
+                            if (pipes[m].hitTest(bird.x, bird.y, birdR)) {
+                                clickOver = true;
+                                click = false;
+                                if(audioT){
+                                    sfx_hit.play();
+                                    setTimeout(function(){sfx_die.play()},400);
+                                }
+                                break;
+                            }
                         }
                     }
+
                     requestAnimationFrame(run);
                 }
                 else if (!firstLoad) {
@@ -194,53 +223,57 @@ load(imglist, function (imgEls) {
                 } else {
                     firstStart(ctx);
                 }
-/*
-                var _x = 0;
-                var _y = 0;
-                var _t = 40;
-                var _i = 0;
-                do {
-                    draw_Y(ctx, Math.ceil(_x) + 0.5, WINDOW_HEIGHT);
-                    _i++;
-                    _x = _x + _t;
-                    /!*ctx.fontWeight = "bold";
-                     ctx.textAlign = "left";
-                     ctx.fillStyle = "#000";
-                     ctx.font = 10 + "px microsoft yahei";
-                     ctx.fillText(String(_i), _x+2, 10 );*!/
-                } while (_x < WINDOW_WIDTH);
-                _i = 0;
-                do {
-                    draw_X(ctx, Math.ceil(_y) + 0.5, WINDOW_WIDTH);
-                    _i++;
-                    _y = _y + _t;
-                    /!* ctx.fontWeight = "bold";
-                     ctx.textAlign = "left";
-                     ctx.fillStyle = "#000";
-                     ctx.font = 10 + "px microsoft yahei";
-                     ctx.fillText(String(_i),2, _y-2 );*!/
-                } while (_y < WINDOW_HEIGHT);*/
+                /*
+                 var _x = 0;
+                 var _y = 0;
+                 var _t = 40;
+                 var _i = 0;
+                 do {
+                 draw_Y(ctx, Math.ceil(_x) + 0.5, WINDOW_HEIGHT);
+                 _i++;
+                 _x = _x + _t;
+                 /!*ctx.fontWeight = "bold";
+                 ctx.textAlign = "left";
+                 ctx.fillStyle = "#000";
+                 ctx.font = 10 + "px microsoft yahei";
+                 ctx.fillText(String(_i), _x+2, 10 );*!/
+                 } while (_x < WINDOW_WIDTH);
+                 _i = 0;
+                 do {
+                 draw_X(ctx, Math.ceil(_y) + 0.5, WINDOW_WIDTH);
+                 _i++;
+                 _y = _y + _t;
+                 /!* ctx.fontWeight = "bold";
+                 ctx.textAlign = "left";
+                 ctx.fillStyle = "#000";
+                 ctx.font = 10 + "px microsoft yahei";
+                 ctx.fillText(String(_i),2, _y-2 );*!/
+                 } while (_y < WINDOW_HEIGHT);*/
             }
 
             requestAnimationFrame(run);
 
 
             //设置点击事件。给小鸟一个瞬时的向上速度
-            cvs.addEventListener("click", function () {
+            cvs.addEventListener("click", function (event) {
+                //console.log('cvs');
+                event.stopPropagation();
                 haveClick();
             });
             document.onkeydown = function (event) {
-                if (click) {
-                    var e = event || window.event || arguments.callee.caller.arguments[0];
-                    if (e && e.keyCode === 32) { // 按 Esc
-                        haveClick();
-                    }
+                event.preventDefault();
+                var e = event || window.event || arguments.callee.caller.arguments[0];
+                if (e && e.keyCode === 32) { // 按空格
+                    haveClick();
                 }
             };
 
             // 点击触发时执行函数
             function haveClick() {
                 if (click) {
+                    if(audioT){
+                        sfx_wing.cloneNode(true).play();
+                    }
                     bird.speed = clickSpeed * PROPORTION;
                 }
                 if (firstLoad) {
@@ -248,6 +281,9 @@ load(imglist, function (imgEls) {
                     bird.speed = clickSpeed * PROPORTION;
                     gameOver = false;
                     firstLoad = false;
+                    if(audioT){
+                        sfx_wing.cloneNode(true).play();
+                    }
                     requestAnimationFrame(run);
                 }
                 if (gameOver) {
@@ -255,6 +291,9 @@ load(imglist, function (imgEls) {
                     clickOver = false;
                     gameOver = !gameOver;
                     preTime = Date.now();
+                    if(audioT){
+                        sfx_wing.cloneNode(true).play();
+                    }
                     start(imgEls);
                 }
             }
@@ -302,5 +341,19 @@ function draw_X(cxt, y, length) {
     cxt.stroke();
 }
 
+function IsPC() {
+    var userAgentInfo = navigator.userAgent;
+    var Agents = ["Android", "iPhone",
+        "SymbianOS", "Windows Phone",
+        "iPad", "iPod"];
+    var flag = true;
+    for (var v = 0; v < Agents.length; v++) {
+        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+            flag = false;
+            break;
+        }
+    }
+    return flag;
+}
 
 
