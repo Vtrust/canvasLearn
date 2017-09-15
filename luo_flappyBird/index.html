@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird</title>
+    <script src="js/source_load.js"></script>
+    <script src="js/birds.js"></script>
+    <script src="js/sky.js"></script>
+    <script src="js/land.js"></script>
+    <script src="js/pipe.js"></script>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <style>
+        html{
+            -webkit-tap-highlight-color: transparent;
+        }
+        html,body{
+            margin: 0;
+            height: 100%;
+        }
+        #cvs{
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="cvs" >error</canvas>
+<audio id="sfx_wing" src="res/sound/sfx_wing.ogg" ></audio>
+<audio id="sfx_die" src="res/sound/sfx_die.ogg" ></audio>
+<audio id="sfx_hit" src="res/sound/sfx_hit.ogg" ></audio>
+<audio id="sfx_point" src="res/sound/sfx_point.ogg" ></audio>
+<audio id="sfx_swooshing" src="res/sound/sfx_swooshing.ogg" ></audio>
+<script src="js/main.js"></script>
+</body>
+
+</html>
